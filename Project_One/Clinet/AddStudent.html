@@ -1,0 +1,61 @@
+<html>
+
+<head>
+
+     <style>
+
+         body
+         {
+
+      background-color: gray;
+      border: 2px solid black;
+         }
+       
+     </style>
+</head>
+<br>
+     Fullname : <input type="text" id="Fullname"> <br> <br>
+     Email : <input type="text"id="Email"> <br><br>
+     Faculty : <input type="text"id="Faculty" > <br> <br>
+     Birth Date : <input type="date"id="Date"> <br> <br>
+   
+    <button onclick="updatesudentID()"> Add</button>
+
+    <body >
+    
+
+    <script>
+
+
+const URL_PATH = 'http://localhost:8000/students';
+        // const studentID = sessionStorage.getItem('id');
+
+        const updatesudentID = async () => 
+        {
+        
+            const updateStudent = {
+                fullname: document.getElementById('Fullname').value,
+                email: document.getElementById('Email').value,
+                faculty: document.getElementById('Faculty').value,
+                birthdate: document.getElementById('Date').value,
+                exam: [] 
+            };
+
+            const response = await fetch(`${URL_PATH}`,{
+                method:"post",
+                headers: {"content-type": 'application/json'},
+                body:JSON.stringify(updateStudent)
+            });
+            if (response.ok)
+            {
+                const data = await response.json();
+                console.log(data);
+               // window.location.href = "MainstudentPage.html"
+               window.location.href = "MainstudentPage.html"
+            }
+        }
+
+       
+    </script>
+</body>
+</html>

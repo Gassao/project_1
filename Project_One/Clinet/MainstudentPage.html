@@ -1,0 +1,237 @@
+<html>
+
+
+
+
+<head>
+
+
+
+
+
+    <head>
+        <style>
+            .id {
+                position: fixed;
+                bottom: 20px;
+                margin-top: 20%;
+                margin-top: 0%;
+                font-size: 40px;
+                width: 100%;
+
+                color: black;
+                text-align: center;
+                padding: 0vmax;
+
+
+
+            }
+
+            /* body{
+              background-color: white;
+              background-image: url('fox.jpg'); 
+
+          }
+        
+     td{
+
+         color:white;
+     }
+     th{
+        color:white;   
+     }
+     .tbl{
+  margin-left: auto;
+  margin-right: auto;
+}
+      */
+            .Btn {
+
+                position: absolute;
+                left: 800px;
+               text-align:center;
+                background-color: darkgoldenrod;
+
+
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            .row {
+                margin-left: -5px;
+                margin-right: -5px;
+            }
+
+            .column {
+                float: left;
+                width: 50%;
+                padding: 5px;
+            }
+
+            /* Clearfix (clear floats) */
+            .row::after {
+                content: "";
+                clear: both;
+                display: table;
+            }
+
+            table {
+                border-collapse: collapse;
+                border-spacing: 0;
+                width: 100%;
+                border: 1px solid #ddd;
+            }
+
+            th,
+            td {
+                text-align: left;
+                padding: 16px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            body {
+                border: 4px solid rgb(0, 0, 0);
+                background-color: aliceblue;
+            }
+        </style>
+        <h1 class="id"> @FIRST_ PROJECT_ IN _FULLSTACK</h1>
+    </head>
+
+<body onload="getAllstudents()">
+
+    <table id="tbl">
+        <tr>
+            <th> Full Name</th>
+            <th>Faculty</th>
+
+        </tr>
+    </table> <br> <br>
+
+    <button class="Btn" onclick="addStudent()">AddPersonalDetailsOfaStudent</button> <br> <br> <br>
+
+    <script>
+
+
+        const URL_PATH = 'http://localhost:8000/students'
+
+        const getAllstudents = async () => {
+            const tableElem = document.getElementById('tbl');
+            tableElem.border = '1';
+            
+            const response = await fetch(URL_PATH);
+
+            if (response.ok) {
+                // --> covert to object 
+                const students = await response.json();
+
+                students.map(student => {
+                    //   --> Creat Row
+                    const trElem = document.createElement('tr')
+                    // -->  Creat Columns
+                    const tdFullName = document.createElement('td')
+                    const tdFaculty = document.createElement('td')
+
+
+
+                    const tdFullNameBtn = document.createElement('td')
+                    const tdExamBtn = document.createElement('td')
+
+                    const FullNameBtnElem = document.createElement('button')
+                    const ExamBtnElem = document.createElement('button')
+
+
+
+
+
+                    FullNameBtnElem.innerText = 'ShowStudentDetalis'
+                    ExamBtnElem.innerText = 'ShowStudentsExams'
+                    // --> onclick  EVENT
+                    FullNameBtnElem.onclick = () => getfullname(student._id)
+                    ExamBtnElem.onclick = () => getExam(student._id)
+
+
+                    const tdEditBtn = document.createElement('td')
+                    const tdDeleteBtn = document.createElement('td')
+
+                    const editBtnElem = document.createElement('button')
+                    const deleteBtnElem = document.createElement('button')
+
+
+                    editBtnElem.innerText = 'Edit'
+                    // --> onclick -> EVENT
+                    editBtnElem.onclick = () => editStudent(student._id)
+
+                    deleteBtnElem.innerText = 'Delete'
+                    // --> onclick -> EVENT
+                    deleteBtnElem.onclick = () => deleteStudent(student._id)
+
+
+                    tdFullName.innerHTML = student.fullname
+                    tdFaculty.innerHTML = student.faculty
+
+
+                    tdFullNameBtn.appendChild(FullNameBtnElem)
+                    tdExamBtn.appendChild(ExamBtnElem)
+
+
+                    tdEditBtn.appendChild(editBtnElem)
+                    tdDeleteBtn.appendChild(deleteBtnElem)
+
+
+
+                    trElem.appendChild(tdFullName)
+                    trElem.appendChild(tdFaculty)
+
+                    trElem.appendChild(tdFullNameBtn)
+                    trElem.appendChild(tdExamBtn)
+                    trElem.appendChild(tdEditBtn)
+                    trElem.appendChild(tdDeleteBtn)
+
+                    tableElem.appendChild(trElem);
+                })
+
+            }
+        }
+
+        // --> export to another page html
+        const getfullname = async (id) => {
+            sessionStorage.setItem('id', id);
+            window.location.href = "ShowStudentDetalis.html"
+
+        }
+        //-->  export to another page html 
+        const getExam = async (id) => {
+            sessionStorage.setItem('id', id)
+            window.location.href = "ShowStudentsExams.html"
+
+        }
+        // --> export to another page  html 
+        const editStudent = async (id) => {
+            sessionStorage.setItem('id', id)
+            window.location.href = "EditStudent.html"
+        }
+        const deleteStudent = async (id) => {
+            const response = await fetch(`${URL_PATH}/${id}`, { method: "delete" })
+
+            if (response.ok) {
+                const data = await response.json()
+                console.log(data)
+                window.location.reload()
+            }
+        }
+        // --> export to another page  html 
+        const addStudent = () => {
+            window.location.href = "AddStudent.html"
+        }
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<html>
+    <body onload="loadData()">
+        Fullname: <input type="text" id="Fullname"/><br/>
+        Faculty: <input type="text" id="Faculty"/><br/>
+        Email : <input type="email" id="Email"/><br/>
+        Birth Date : <input type="date" id="BirthDate"/><br/>
+        <br/>
+
+        <button onclick="updateData()">Update</button>
+    </body>
+    <script>
+        const URL_PATH = 'http://localhost:8000/students';
+        const studentID = sessionStorage.getItem('id');
+
+        const loadData = async () => {
+            const reponse = await fetch(`${URL_PATH}/${studentID}`)
+      
+            if (reponse.ok)
+            {
+                  // --> covert to object 
+                const student = await reponse.json();
+                 
+                document.getElementById('Fullname').value =student.fullname
+                document.getElementById('Faculty').value = student.faculty
+                document.getElementById('Email').value=student.email
+                document.getElementById('BirthDate').value= student.birthdate;
+            }
+        }
+
+        const updateData = async () => 
+        {
+         
+        
+            const updateStudent = {
+            
+                fullname: document.getElementById('Fullname').value,
+                email: document.getElementById('Email').value,
+                faculty: document.getElementById('Faculty').value,
+                birthdate: document.getElementById('BirthDate').value
+            };
+
+            const response = await fetch(`${URL_PATH}/${studentID}`,{
+                method:"put",
+                headers: {"content-type": 'application/json'},
+                body:JSON.stringify(updateStudent)
+            });
+
+            if (response.ok)
+            {
+                const data = await response.json();
+                console.log(data);
+                window.location.href = "MainstudentPage.html"
+            }
+        }
+    </script>
+</html>

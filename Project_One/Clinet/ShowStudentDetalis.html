@@ -1,0 +1,136 @@
+<html>
+
+
+
+
+
+<head>
+
+<style>
+
+   td{
+
+        color:white;
+    }
+    th{
+       color:white;   
+    }
+    .tbl{
+ margin-left: auto;
+ margin-right: auto;
+}
+     */
+
+* {
+ box-sizing: border-box;
+}
+
+.row {
+ margin-left:-5px;
+ margin-right:-5px;
+}
+ 
+.column {
+ float: left;
+ width: 50%;
+ padding: 5px;
+}
+
+/* Clearfix (clear floats) */
+.row::after {
+ content: "";
+ clear: both;
+ display: table;
+}
+
+table {
+ border-collapse: collapse;
+ border-spacing: 0;
+ width: 100%;
+ border: 1px solid #ddd;
+}
+
+th, td {
+ text-align: left;
+ padding: 16px;
+}
+
+tr:nth-child(even) {
+ background-color: darkkhaki;
+}
+
+
+
+</style>
+
+    
+ 
+   </style>
+</head>
+<body onload="GetAllStudents()" style=" background-color: darkgrey;">
+    <table id="table">
+        <th> Full Name</th>
+        <th> Faculty</th>
+        <th>Email</th>
+        <th> Birth Date</th>
+
+    </table>
+
+
+</body>
+
+
+
+
+
+<script>
+
+
+    const URL_Path = "http://localhost:8000/students"
+
+    const studentID = sessionStorage.getItem('id');
+     
+      
+    const GetAllStudents = async () => {
+    
+        const response = await fetch(`${URL_Path}/${studentID}`);
+     
+    
+        if (response.ok) {
+        
+            const student = await response.json();
+      
+            const table = document.getElementById('table')
+            table.border = '1';
+             //  //   --> Creat Row
+            const tr = document.createElement('tr');
+             // -->  Creat Columns
+            const tdFullName = document.createElement('td');
+            const tdFaculty = document.createElement('td');
+            const tdEmail = document.createElement('td');
+            const tdBrithDate = document.createElement('td');
+
+        
+
+            tdFullName.innerText =student.fullname;
+            tdFaculty.innerText = student.faculty;
+            tdEmail.innerText = student.email;
+            tdBrithDate.innerText =student.birthdate.slice(0,10);
+
+
+
+
+            tr.appendChild(tdFullName)
+            tr.appendChild(tdFaculty)
+            tr.appendChild(tdEmail)
+            tr.appendChild(tdBrithDate)
+
+            table.appendChild(tr)
+      
+        }
+    }
+
+</script>
+</body>
+
+</html>

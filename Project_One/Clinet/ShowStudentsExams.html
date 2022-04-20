@@ -1,0 +1,262 @@
+<html>
+
+<head>
+
+    <!--  Table design  in CSS   --  5 up to 67 -->
+
+    <style>
+        /* td {
+
+            color: white;
+        }
+
+        th {
+            color: black;
+        }
+
+        .tbl {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        */
+        /* * {
+            box-sizing: border-box;
+        }
+
+        .row {
+            margin-left: -5px;
+            margin-right: -5px;
+        }
+
+        .column {
+            float: left;
+            width: 50%;
+            padding: 5px;
+        }
+
+        /* Clearfix (clear floats) */
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 16px;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgb(107, 189, 125);
+        }
+
+        /* body {
+
+            background-color: seashell;
+            border: rgb(107, 189, 125);
+            border: 8px solid slateblue ;
+        } */
+
+        */
+    </style>
+</head>
+
+<body onload="getAll()">
+    <table id="table">
+        <tr>
+            <th> Name of Exam </th>
+            <th> Date </th>
+            <th> Grade </th>
+            <th> Edit </th>
+            <th> Update </th>
+            <th> Delete </th>
+        </tr>
+    </table> <br> <br> <br> <br>
+
+
+
+    <div>
+        Exam name<input type="text" id="name">
+        Date<input type="date" id="date">
+        Grade<input type="text" id="grade">
+
+        <button onclick="AddData()"> Add</button>
+        <!-- if the click Add with out items,it create blackspace. 
+           and also if we want one  field into  all of them ,others filedes must be blacksoace. 
+        
+        
+        -->
+    </div>
+
+
+
+    <script>
+        const URL_Path = "http://localhost:8000/students"
+        const studentID = sessionStorage.getItem('id');
+
+
+        const getAll = async () => {
+            const response = await fetch(`${URL_Path}/${studentID}`)
+
+            if (response.ok) {
+
+                // covert to object 
+                const student = await response.json();
+
+                const table = document.getElementById('table')
+                table.border = '1';
+
+                let exams = student.exam;
+
+                exams.map((Newexam, index) => {
+                    //  Creat Row
+                    const tr = document.createElement('tr');
+                    // Creat Columns
+                    const tdNameofExam = document.createElement('td');
+                    tdNameofExam.id = `tdName${index}`
+                    const tdDate = document.createElement('td');
+                    tdDate.id = `tdName${index}`
+                    const tdGrade = document.createElement('td');
+                    tdGrade.id = `tdName${index}`
+
+                    const tdEidet = document.createElement('td');
+                    const editBT = document.createElement('button')
+                    editBT.innerHTML = 'Edit'
+                    editBT.onclick = () => EidetData(`${index}`)
+
+
+
+                    const tdUpdate = document.createElement('td');
+                    const UpdateBT = document.createElement('button')
+                    UpdateBT.innerHTML = 'UpdateItems'
+                    UpdateBT.onclick = () => UpdateItems(`${index}`)
+
+
+                    const tdDelete = document.createElement('td');
+                    const DeleteBT = document.createElement('button')
+                    DeleteBT.innerHTML = 'Delete'
+                    DeleteBT.onclick = () => UpdateItems(`${index}`)
+
+
+
+
+                    tdNameofExam.innerHTML = Newexam.nameofexam;
+                    tdDate.innerHTML = Newexam.date.slice(0, 10);
+                    tdGrade.innerHTML = Newexam.grade;
+
+                    tdEidet.appendChild(editBT);
+                    tdUpdate.appendChild(UpdateBT)
+                    tdDelete.appendChild(DeleteBT)
+
+                    tr.appendChild(tdNameofExam)
+                    tr.appendChild(tdDate)
+                    tr.appendChild(tdGrade)
+                    tr.appendChild(tdEidet)
+                    tr.appendChild(tdUpdate)
+                    tr.appendChild(tdDelete)
+                    table.appendChild(tr);
+                });
+
+            }
+        }
+
+        
+        // --> add new data
+        const AddData = async () => {
+
+            const response = await fetch(`${URL_Path}/${studentID}`)
+            const addExam = {
+                nameofexam: document.getElementById('name').value,
+                date: document.getElementById('date').value,
+                grade: document.getElementById('grade').value
+            }
+            if (response.ok  ) {
+                const student = await response.json();
+                student.exam.push(addExam)
+                console.log(student)
+
+                const response1 = await fetch(`${URL_Path}/${studentID}`, {
+                    method: "put",
+                    headers: { "content-type": 'application/json' },
+                    body: JSON.stringify(student)
+                });
+                if (response1.ok) {
+                    const data = await response1.json()
+                    console.log(data)
+
+                }
+                //-->Add personal details of a student
+                window.location.href = "ShowStudentsExams.html"
+            }
+
+        }
+
+        //  ->eidet  items, and also if fieldes blackspace , we must full all fieldes and  Pressing button UpdateItems, it must be update
+        const EidetData = async (index) => {
+            const response = await fetch(`${URL_Path}/${studentID}`)
+            const NewStudents = await response.json();
+            let exam = NewStudents.exam[index];
+            document.getElementById('name').value = exam.nameofexam
+            //  --> using silce () -> to get date
+            let date = exam.date;
+            document.getElementById('date').value = date.slice(0, 10)
+            document.getElementById('grade').value = exam.grade
+
+        }
+
+
+        const UpdateItems = async (index) => {
+
+            //-->Adding items in a specific location and updating , and also delete items.
+            const updatedExam =
+            {
+                nameofexam: document.getElementById("name").value,
+                date: document.getElementById("date").value,
+                grade: document.getElementById("grade").value
+            }
+
+            const response = await fetch(`${URL_Path}/${studentID}`);
+            if (response.ok) {
+                let data = await response.json();
+                data.exam[index] = updatedExam;
+
+                const response2 = await fetch(`${URL_Path}/${studentID}`, {
+                    method: 'put',
+                    headers: { 'content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            }
+            window.location.reload();
+
+        }
+
+        //--> Pressing a button is deleted , it delete items and also updating items, that's mean both things  delete and updateing
+        const deletExam = async (index) => {
+            const response = await fetch(`${URL_Path}/${studentID}`);
+            if (response.ok) {
+                let student = await response.json();
+                student.exam.slice(index, 1)
+
+                const response2 = await fetch(`${URL_Path}/${studentID}`, {
+                    method: 'put',
+                    headers: { 'content-Type': 'application/json' },
+                    body: JSON.stringify(student)
+                });
+                window.location.reload();
+
+            }
+        }
+
+    </script>
+</body>
+
+</html>
